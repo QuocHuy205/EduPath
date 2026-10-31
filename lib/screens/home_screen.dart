@@ -6,16 +6,26 @@ import '../theme/app_route.dart';
 import '../data/mock_data.dart';
 import 'subject_categories_screen.dart';
 import 'search_screen.dart';
+import 'subject_detail_screen.dart';
+import 'my_courses_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final VoidCallback? onOpenSearch;
   final VoidCallback? onOpenCategories;
+  final VoidCallback? onOpenMyCourses;
 
   const HomeScreen({
     super.key,
     this.onOpenSearch,
     this.onOpenCategories,
+    this.onOpenMyCourses,
   });
+
+  void _navigateToDetail(BuildContext context, CourseModel course) {
+    Navigator.of(context).push(
+      AppSlideRoute(page: SubjectDetailScreen(course: course)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,11 +110,13 @@ class HomeScreen extends StatelessWidget {
                         size: 22,
                       ),
                       const SizedBox(width: AppTheme.space12),
-                      Text(
-                        'Tìm kiếm môn học, bài giảng...',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          color: AppColors.inputBorder,
+                      Expanded(
+                        child: Text(
+                          'Tìm kiếm môn học, bài giảng...',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: AppColors.inputBorder,
+                          ),
                         ),
                       ),
                     ],
@@ -148,7 +160,7 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(height: AppTheme.space16),
                           Material(
                             color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusButton),
                             child: InkWell(
                               onTap: () {
                                 if (onOpenCategories != null) {
@@ -156,13 +168,12 @@ class HomeScreen extends StatelessWidget {
                                 } else {
                                   Navigator.of(context).push(
                                     AppSlideRoute(
-                                      page:
-                                          const SubjectCategoriesScreen(),
+                                      page: const SubjectCategoriesScreen(),
                                     ),
                                   );
                                 }
                               },
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusButton),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
@@ -275,27 +286,49 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.check_box_outline_blank_rounded,
                       bgColor: const Color(0xFFEBF2FE),
                       iconColor: AppColors.info,
-                      onTap: () {},
+                      onTap: () {
+                        _navigateToDetail(context, MockData.mathCourse);
+                      },
                     ),
                   ),
                   const SizedBox(width: AppTheme.space12),
                   Expanded(
                     child: _QuickAccessCard(
-                      label: 'Kiểm tra',
+                      label: 'Đánh dấu',
                       icon: Icons.check_box_rounded,
                       bgColor: const Color(0xFFEAF8EF),
                       iconColor: AppColors.success,
-                      onTap: () {},
+                      onTap: () {
+                        if (onOpenMyCourses != null) {
+                          onOpenMyCourses!();
+                        } else {
+                          Navigator.of(context).push(
+                            AppSlideRoute(
+                              page: const MyCoursesScreen(showBackButton: true),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(width: AppTheme.space12),
                   Expanded(
                     child: _QuickAccessCard(
-                      label: 'Tài liệu',
-                      icon: Icons.article_outlined,
+                      label: 'Lịch thi',
+                      icon: Icons.calendar_month_rounded,
                       bgColor: const Color(0xFFFEF7EB),
                       iconColor: AppColors.warning,
-                      onTap: () {},
+                      onTap: () {
+                        if (onOpenMyCourses != null) {
+                          onOpenMyCourses!();
+                        } else {
+                          Navigator.of(context).push(
+                            AppSlideRoute(
+                              page: const MyCoursesScreen(showBackButton: true),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -316,7 +349,17 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      if (onOpenCategories != null) {
+                        onOpenCategories!();
+                      } else {
+                        Navigator.of(context).push(
+                          AppSlideRoute(
+                            page: const SubjectCategoriesScreen(),
+                          ),
+                        );
+                      }
+                    },
                     child: Text(
                       'Xem tất cả ›',
                       style: GoogleFonts.inter(
@@ -337,68 +380,78 @@ class HomeScreen extends StatelessWidget {
                 clipBehavior: Clip.none,
                 child: Row(
                   children: MockData.suggestedCourses.map((course) {
-                    return Container(
-                      width: 156,
-                      margin: const EdgeInsets.only(right: AppTheme.space12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Ảnh minh họa môn học
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.asset(
-                              course.coverImage!,
-                              width: 156,
-                              height: 120,
-                              fit: BoxFit.cover,
+                    return GestureDetector(
+                      onTap: () => _navigateToDetail(context, course),
+                      child: Container(
+                        width: 156,
+                        margin: const EdgeInsets.only(right: AppTheme.space12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Ảnh minh họa môn học
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: course.coverImage != null
+                                  ? Image.asset(
+                                      course.coverImage!,
+                                      width: 156,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      width: 156,
+                                      height: 120,
+                                      color: AppColors.primaryLight,
+                                      child: const Icon(Icons.school, color: AppColors.primary, size: 40),
+                                    ),
                             ),
-                          ),
-                          const SizedBox(height: AppTheme.space8),
-                          // Tiêu đề môn học
-                          Text(
-                            course.title,
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: AppTheme.space4),
-                          // Tiến độ học tập
-                          RichText(
-                            text: TextSpan(
+                            const SizedBox(height: AppTheme.space8),
+                            // Tiêu đề môn học
+                            Text(
+                              course.title,
                               style: GoogleFonts.inter(
-                                fontSize: 11,
-                                color: AppColors.textSecondary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
                               ),
-                              children: [
-                                const TextSpan(text: 'Tiến độ học tập '),
-                                TextSpan(
-                                  text: '${(course.progress * 100).toInt()}%',
-                                  style: GoogleFonts.inter(
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.primary,
-                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: AppTheme.space4),
+                            // Tiến độ học tập
+                            RichText(
+                              text: TextSpan(
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary,
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: AppTheme.space4),
-                          // Thanh tiến độ ngang
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: course.progress,
-                              minHeight: 5,
-                              backgroundColor: AppColors.border,
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                AppColors.primary,
+                                children: [
+                                  const TextSpan(text: 'Tiến độ học tập '),
+                                  TextSpan(
+                                    text: '${(course.progress * 100).toInt()}%',
+                                    style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: AppTheme.space4),
+                            // Thanh tiến độ ngang
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: course.progress,
+                                minHeight: 5,
+                                backgroundColor: AppColors.border,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  AppColors.primaryAccent, // #22C55E
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }).toList(),

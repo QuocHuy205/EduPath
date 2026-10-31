@@ -7,6 +7,8 @@ import '../data/mock_data.dart';
 import 'home_screen.dart';
 import 'subject_categories_screen.dart';
 import 'search_screen.dart';
+import 'my_courses_screen.dart';
+import 'subject_detail_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   final int initialIndex;
@@ -45,22 +47,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           );
         },
         onOpenCategories: () {
-          setState(() {
-            _currentIndex = 1;
-          });
+          _onTabSelected(1);
+        },
+        onOpenMyCourses: () {
+          _onTabSelected(2);
         },
       ),
       const SubjectCategoriesScreen(showBackButton: false),
-      const _PlaceholderScreen(
-        title: 'Học tập',
-        subtitle: 'Lộ trình và các bài học đã lưu',
-        icon: Icons.article_outlined,
-      ),
-      const _PlaceholderScreen(
-        title: 'Yêu thích',
-        subtitle: 'Danh sách môn học yêu thích',
-        icon: Icons.favorite_outline_rounded,
-      ),
+      const MyCoursesScreen(showBackButton: false),
+      const _FavoritesTabScreen(),
       const _ProfileScreen(),
     ];
 
@@ -88,7 +83,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(0, 'Trang chủ', Icons.home_rounded, Icons.home_outlined),
-                _buildNavItem(1, 'Khám phá', Icons.search_rounded, Icons.search_rounded),
+                _buildNavItem(1, 'Khám phá', Icons.grid_view_rounded, Icons.grid_view_outlined),
                 _buildNavItem(2, 'Học tập', Icons.article_rounded, Icons.article_outlined),
                 _buildNavItem(3, 'Yêu thích', Icons.favorite_rounded, Icons.favorite_outline_rounded),
                 _buildNavItem(4, 'Cá nhân', Icons.person_rounded, Icons.person_outline_rounded),
@@ -136,47 +131,111 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 }
 
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-
-  const _PlaceholderScreen({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-  });
+class _FavoritesTabScreen extends StatelessWidget {
+  const _FavoritesTabScreen();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.space16,
+            vertical: AppTheme.space12,
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(icon, size: 64, color: AppColors.primary),
-              const SizedBox(height: AppTheme.space16),
-              Text(
-                title,
-                style: GoogleFonts.inter(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Môn học yêu thích',
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 34,
+                    fit: BoxFit.contain,
+                  ),
+                ],
               ),
-              const SizedBox(height: AppTheme.space8),
-              Text(
-                subtitle,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
+              const SizedBox(height: AppTheme.space16),
+              Expanded(
+                child: ListView(
+                  children: [
+                    _buildFavoriteCard(
+                      context,
+                      MockData.mathCourse,
+                    ),
+                    const SizedBox(height: AppTheme.space12),
+                    _buildFavoriteCard(
+                      context,
+                      MockData.englishCourse,
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFavoriteCard(BuildContext context, CourseModel course) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+        border: Border.all(color: AppColors.border, width: 1),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(AppTheme.space12),
+        leading: Container(
+          width: 48,
+          height: 48,
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: course.iconImage != null
+              ? Image.asset(course.iconImage!, fit: BoxFit.contain)
+              : const Icon(Icons.school, color: AppColors.primary),
+        ),
+        title: Text(
+          course.title,
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        subtitle: Text(
+          course.subtitle.isNotEmpty
+              ? course.subtitle
+              : '${course.category} • ${course.credits}',
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios_rounded,
+          color: AppColors.primary,
+          size: 16,
+        ),
+        onTap: () {
+          Navigator.of(context).push(
+            AppSlideRoute(page: SubjectDetailScreen(course: course)),
+          );
+        },
       ),
     );
   }
@@ -191,46 +250,88 @@ class _ProfileScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTheme.space24),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.space16,
+            vertical: AppTheme.space12,
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: AppTheme.space16),
-              Container(
-                width: 88,
-                height: 88,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primaryLight,
-                ),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/banner_student.png',
-                    fit: BoxFit.cover,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Tài khoản cá nhân',
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 34,
+                    fit: BoxFit.contain,
+                  ),
+                ],
               ),
-              const SizedBox(height: AppTheme.space16),
-              Text(
-                MockData.currentUser.name,
-                style: GoogleFonts.inter(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: AppTheme.space4),
-              Text(
-                MockData.currentUser.email,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
+              const SizedBox(height: AppTheme.space24),
+              Center(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 42,
+                      backgroundColor: AppColors.primaryLight,
+                      child: ClipOval(
+                        child: Image.asset(
+                          MockData.currentUser.avatarUrl,
+                          width: 84,
+                          height: 84,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.space12),
+                    Text(
+                      MockData.currentUser.name,
+                      style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      MockData.currentUser.email,
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: AppTheme.space24),
-              _buildProfileOption(Icons.school_outlined, 'Tiến độ học tập'),
-              _buildProfileOption(Icons.notifications_outlined, 'Thông báo'),
-              _buildProfileOption(Icons.settings_outlined, 'Cài đặt tài khoản'),
-              _buildProfileOption(Icons.help_outline_rounded, 'Trợ giúp & Hỗ trợ'),
+              _buildMenuItem(
+                icon: Icons.badge_outlined,
+                title: 'Mã sinh viên',
+                value: 'SV2026-08912',
+              ),
+              _buildMenuItem(
+                icon: Icons.school_outlined,
+                title: 'Chuyên ngành',
+                value: 'Công nghệ thông tin',
+              ),
+              _buildMenuItem(
+                icon: Icons.notifications_none_rounded,
+                title: 'Thông báo học tập',
+                value: 'Đang bật (20:00)',
+              ),
+              _buildMenuItem(
+                icon: Icons.shield_outlined,
+                title: 'Bảo mật tài khoản',
+                value: 'Bình thường',
+              ),
             ],
           ),
         ),
@@ -238,7 +339,11 @@ class _ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileOption(IconData icon, String title) {
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.space12),
       padding: const EdgeInsets.symmetric(
@@ -253,21 +358,22 @@ class _ProfileScreen extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: AppColors.primary, size: 22),
-          const SizedBox(width: AppTheme.space16),
-          Expanded(
-            child: Text(
-              title,
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-              ),
+          const SizedBox(width: AppTheme.space12),
+          Text(
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textPrimary,
             ),
           ),
-          const Icon(
-            Icons.arrow_forward_ios_rounded,
-            color: AppColors.textSecondary,
-            size: 14,
+          const Spacer(),
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
