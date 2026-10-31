@@ -7,3 +7,6 @@ export 'home_screen.dart';
 export 'subject_categories_screen.dart';
 export 'search_screen.dart';
 export 'search_filter_screen.dart';
+export 'search_results_screen.dart';
+export 'subject_detail_screen.dart';
+export 'my_courses_screen.dart';
