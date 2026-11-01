@@ -93,6 +93,56 @@ class CategoryModel {
   });
 }
 
+class ChapterModel {
+  final int number;
+  final String title;
+  final int lessonCount;
+
+  const ChapterModel({
+    required this.number,
+    required this.title,
+    required this.lessonCount,
+  });
+}
+
+class AssignmentModel {
+  final String id;
+  final String title;
+  final String courseName;
+  final String deadline;
+  final String status; // 'dang_lam', 'da_nop', 'chua_lam'
+  final IconData icon;
+  final Color iconBgColor;
+
+  const AssignmentModel({
+    required this.id,
+    required this.title,
+    required this.courseName,
+    required this.deadline,
+    required this.status,
+    required this.icon,
+    required this.iconBgColor,
+  });
+}
+
+class DocumentModel {
+  final String id;
+  final String fileName;
+  final String courseName;
+  final String fileSize;
+  final String fileType; // 'pdf', 'pptx', 'doc'
+  final Color iconColor;
+
+  const DocumentModel({
+    required this.id,
+    required this.fileName,
+    required this.courseName,
+    required this.fileSize,
+    required this.fileType,
+    required this.iconColor,
+  });
+}
+
 class MockData {
   MockData._();
 
@@ -478,6 +528,187 @@ class MockData {
       courseCount: 15,
       iconImage: 'assets/images/cat_history.png',
       backgroundColor: Color(0xFFFBF1E8),
+    ),
+  ];
+
+  // --- Màn 15: Kết quả tìm kiếm ---
+  static const List<CourseModel> searchResults = [
+    CourseModel(
+      id: 'sr_1',
+      title: 'Toán cao cấp',
+      category: 'Đại cương',
+      credits: '3 tín chỉ',
+      iconImage: 'assets/images/cat_math.png',
+    ),
+    CourseModel(
+      id: 'sr_2',
+      title: 'Toán rời rạc',
+      category: 'Đại cương',
+      credits: '3 tín chỉ',
+      iconImage: 'assets/images/cat_math.png',
+    ),
+    CourseModel(
+      id: 'sr_3',
+      title: 'Giải tích',
+      category: 'Đại cương',
+      credits: '3 tín chỉ',
+      iconImage: 'assets/images/cat_math.png',
+    ),
+    CourseModel(
+      id: 'sr_4',
+      title: 'Xác suất thống kê',
+      category: 'Đại cương',
+      credits: '2 tín chỉ',
+      iconImage: 'assets/images/cat_math.png',
+    ),
+  ];
+
+  // --- Màn 16: Chi tiết môn học ---
+  static const List<ChapterModel> courseChapters = [
+    ChapterModel(number: 1, title: 'Giới hạn và tính liên tục', lessonCount: 10),
+    ChapterModel(number: 2, title: 'Đạo hàm và ứng dụng', lessonCount: 12),
+    ChapterModel(number: 3, title: 'Tích phân và ứng dụng', lessonCount: 14),
+    ChapterModel(number: 4, title: 'Ma trận và đại số tuyến tính', lessonCount: 12),
+  ];
+
+  // --- Màn 17: Môn học của tôi ---
+  static const List<CourseModel> myCoursesInProgress = [
+    CourseModel(
+      id: 'mc_1',
+      title: 'Toán cao cấp',
+      progress: 0.80,
+      category: 'Đại cương',
+      iconImage: 'assets/images/cat_math.png',
+    ),
+    CourseModel(
+      id: 'mc_2',
+      title: 'Tiếng Anh cơ bản',
+      progress: 0.35,
+      category: 'Ngoại ngữ',
+      iconImage: 'assets/images/cat_english.png',
+    ),
+    CourseModel(
+      id: 'mc_3',
+      title: 'Pháp luật đại cương',
+      progress: 0.20,
+      category: 'Đại cương',
+      iconImage: 'assets/images/cat_law.png',
+    ),
+  ];
+
+  // --- Màn 19: Nội dung yêu thích ---
+  static const List<CourseModel> favoriteCourses = [
+    CourseModel(
+      id: 'fav_1',
+      title: 'Toán cao cấp',
+      category: 'Đại cương',
+      credits: '3 tín chỉ',
+      iconImage: 'assets/images/cat_math.png',
+    ),
+    CourseModel(
+      id: 'fav_2',
+      title: 'Kỹ năng thuyết trình',
+      category: 'Kỹ năng',
+      credits: '2 tín chỉ',
+      iconImage: 'assets/images/ic_search_comm.png',
+    ),
+    CourseModel(
+      id: 'fav_3',
+      title: 'Lịch sử Việt Nam',
+      category: 'Đại cương',
+      credits: '2 tín chỉ',
+      iconImage: 'assets/images/cat_history.png',
+    ),
+    CourseModel(
+      id: 'fav_4',
+      title: 'Marketing căn bản',
+      category: 'Chuyên ngành',
+      credits: '3 tín chỉ',
+      iconImage: 'assets/images/ic_search_comm.png',
+    ),
+  ];
+
+  // --- Màn 26: Bài tập của tôi ---
+  static const List<AssignmentModel> myAssignments = [
+    AssignmentModel(
+      id: 'hw_1',
+      title: 'Bài tập chương 1',
+      courseName: 'Toán cao cấp',
+      deadline: '25/10',
+      status: 'dang_lam',
+      icon: Icons.description_outlined,
+      iconBgColor: Color(0xFFEAF8EF),
+    ),
+    AssignmentModel(
+      id: 'hw_2',
+      title: 'Unit 3 - Grammar',
+      courseName: 'Tiếng Anh',
+      deadline: '28/10',
+      status: 'da_nop',
+      icon: Icons.spellcheck_rounded,
+      iconBgColor: Color(0xFFEAF8EF),
+    ),
+    AssignmentModel(
+      id: 'hw_3',
+      title: 'Bài tập phân tích',
+      courseName: 'Kinh tế vi mô',
+      deadline: '28/10',
+      status: 'chua_lam',
+      icon: Icons.bar_chart_rounded,
+      iconBgColor: Color(0xFFEAF8EF),
+    ),
+    AssignmentModel(
+      id: 'hw_4',
+      title: 'Bài luận cá nhân',
+      courseName: 'Kỹ năng thuyết trình',
+      deadline: '30/10',
+      status: 'dang_lam',
+      icon: Icons.edit_note_rounded,
+      iconBgColor: Color(0xFFFEF7EB),
+    ),
+  ];
+
+  // --- Màn 27: Tài liệu của tôi ---
+  static const List<DocumentModel> myDocuments = [
+    DocumentModel(
+      id: 'doc_1',
+      fileName: 'Giới hạn hàm số.pdf',
+      courseName: 'Toán cao cấp',
+      fileSize: '2.4 MB',
+      fileType: 'pdf',
+      iconColor: Color(0xFFD92D20),
+    ),
+    DocumentModel(
+      id: 'doc_2',
+      fileName: 'Unit 3 - Vocabulary.pdf',
+      courseName: 'Tiếng Anh cơ bản',
+      fileSize: '1.8 MB',
+      fileType: 'pdf',
+      iconColor: Color(0xFF2563EB),
+    ),
+    DocumentModel(
+      id: 'doc_3',
+      fileName: 'Kinh tế vi mô - Chương 2.pdf',
+      courseName: 'Kinh tế vi mô',
+      fileSize: '3.1 MB',
+      fileType: 'pdf',
+      iconColor: Color(0xFFD92D20),
+    ),
+    DocumentModel(
+      id: 'doc_4',
+      fileName: 'Kỹ năng thuyết trình.pptx',
+      courseName: 'Kỹ năng mềm',
+      fileSize: '4.2 MB',
+      fileType: 'pptx',
+      iconColor: Color(0xFFB45309),
+    ),
+    DocumentModel(
+      id: 'doc_5',
+      fileName: 'Đề cương ôn tập.pdf',
+      courseName: 'Tài liệu chung',
+      fileSize: '2.0 MB',
+      fileType: 'pdf',
+      iconColor: Color(0xFFD92D20),
     ),
   ];
 }

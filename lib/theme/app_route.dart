@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class AppSlideRoute<T> extends PageRouteBuilder<T> {
   final Widget page;
 
-  AppSlideRoute({required this.page})
+  AppSlideRoute({required this.page, super.settings})
       : super(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
