@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
-import '../theme/app_route.dart';
 import '../widgets/widgets.dart';
-import 'search_results_screen.dart';
 
 class SearchFilterScreen extends StatefulWidget {
   const SearchFilterScreen({super.key});
@@ -14,21 +12,21 @@ class SearchFilterScreen extends StatefulWidget {
 }
 
 class _SearchFilterScreenState extends State<SearchFilterScreen> {
-  // Loại nội dung: 0: Tất cả, 1: Khóa học, 2: Bài học
+  // Loại nội dung: 0: Tất cả, 1: Môn học, 2: Bài học
   int _contentType = 0;
-  final List<String> _contentTypes = ['Tất cả', 'Khóa học', 'Bài học'];
+  final List<String> _contentTypes = ['Tất cả', 'Môn học', 'Bài học'];
 
   // Danh mục checkboxes
   final Map<String, bool> _categories = {
-    'Pháp luật đại cương': true,
+    'Môn đại cương': true,
     'Ngoại ngữ': false,
     'Kỹ năng': false,
-    'Triết học': false,
+    'Tài liệu': false,
   };
 
-  // Sắp xếp theo: 0: Phổ biến nhất, 1: Mới nhất, 2: Đánh giá cao
+  // Sắp xếp theo: 0: Tất cả, 1: Mới nhất, 2: Phổ biến
   int _sortBy = 0;
-  final List<String> _sortOptions = ['Phổ biến nhất', 'Mới nhất', 'Đánh giá cao'];
+  final List<String> _sortOptions = ['Tất cả', 'Mới nhất', 'Phổ biến'];
 
   // Trình độ: 0: Tất cả, 1: Cơ bản, 2: Nâng cao
   int _level = 0;
@@ -39,19 +37,8 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
       _contentType = 0;
       _sortBy = 0;
       _level = 0;
-      _categories.updateAll((key, value) => key == 'Pháp luật đại cương');
+      _categories.updateAll((key, value) => key == 'Môn đại cương');
     });
-  }
-
-  void _applyFilter() {
-    // Điều hướng sang màn hình Kết quả tìm kiếm với bộ lọc đã chọn
-    Navigator.of(context).pushReplacement(
-      AppSlideRoute(
-        page: const SearchResultsScreen(
-          initialQuery: 'Toán cao cấp',
-        ),
-      ),
-    );
   }
 
   @override
@@ -96,7 +83,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.space16,
+                      horizontal: AppTheme.space24,
                       vertical: AppTheme.space12,
                     ),
                     child: Column(
@@ -116,9 +103,9 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                                     size: 20,
                                   ),
                                   padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                                  constraints: const BoxConstraints(),
                                 ),
-                                const SizedBox(width: AppTheme.space8),
+                                const SizedBox(width: AppTheme.space12),
                                 Text(
                                   'Bộ lọc tìm kiếm',
                                   style: GoogleFonts.inter(
@@ -129,40 +116,40 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                                 ),
                               ],
                             ),
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: _resetFilter,
-                                  child: Text(
-                                    'Đặt lại',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: AppTheme.space12),
-                                Image.asset(
-                                  'assets/images/logo.png',
-                                  height: 34,
-                                  fit: BoxFit.contain,
-                                ),
-                              ],
+                            Image.asset(
+                              'assets/images/logo.png',
+                              height: 36,
+                              fit: BoxFit.contain,
                             ),
                           ],
                         ),
 
                         const SizedBox(height: AppTheme.space24),
 
-                        // Phần 1: Loại nội dung
-                        Text(
-                          'Loại nội dung',
-                          style: GoogleFonts.inter(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                          ),
+                        // Phần 1: Loại nội dung + Đặt lại
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Loại nội dung',
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: _resetFilter,
+                              child: Text(
+                                'Đặt lại',
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
                         const SizedBox(height: AppTheme.space12),
@@ -180,11 +167,11 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
 
                         const SizedBox(height: AppTheme.space24),
 
-                        // Phần 2: Danh mục (Hộp chọn có viền #7C8C82 theo quy tắc ô nhập)
+                        // Phần 2: Danh mục (Hộp chọn)
                         Text(
                           'Danh mục',
                           style: GoogleFonts.inter(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
@@ -201,7 +188,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                               borderRadius:
                                   BorderRadius.circular(AppTheme.radiusInput),
                               border: Border.all(
-                                color: AppColors.inputBorder, // #7C8C82 theo quy tắc ô nhập
+                                color: AppColors.border,
                                 width: 1,
                               ),
                             ),
@@ -237,8 +224,8 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                                             ? Icons.check_box_rounded
                                             : Icons.check_box_outline_blank_rounded,
                                         color: isChecked
-                                            ? AppColors.primary
-                                            : AppColors.inputBorder,
+                                            ? AppColors.textSecondary
+                                            : AppColors.primary,
                                         size: 22,
                                       ),
                                     ],
@@ -255,7 +242,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                         Text(
                           'Sắp xếp theo',
                           style: GoogleFonts.inter(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
@@ -279,7 +266,7 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                         Text(
                           'Trình độ',
                           style: GoogleFonts.inter(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
@@ -303,17 +290,19 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                   ),
                 ),
 
-                // Nút chính duy nhất ở dưới "Áp dụng bộ lọc" (#118646)
+                // Nút cố định ở dưới "Áp dụng bộ lọc"
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.space16,
-                    vertical: AppTheme.space12,
+                    horizontal: AppTheme.space24,
+                    vertical: AppTheme.space16,
                   ),
                   child: AppButton(
                     text: 'Áp dụng bộ lọc',
-                    height: 48,
-                    borderRadius: AppTheme.radiusButton,
-                    onPressed: _applyFilter,
+                    height: 52,
+                    borderRadius: 12,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
                   ),
                 ),
               ],
@@ -329,46 +318,43 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
     required int selectedIndex,
     required ValueChanged<int> onSelected,
   }) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: List.generate(options.length, (index) {
-          final isSelected = selectedIndex == index;
-          return Padding(
-            padding: const EdgeInsets.only(right: AppTheme.space8),
-            child: InkWell(
-              onTap: () => onSelected(index),
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 8,
+    return Row(
+      children: List.generate(options.length, (index) {
+        final isSelected = selectedIndex == index;
+        return Padding(
+          padding: const EdgeInsets.only(right: AppTheme.space8),
+          child: InkWell(
+            onTap: () => onSelected(index),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.cardBackground,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? AppColors.primary : AppColors.border,
+                  width: 1,
                 ),
-                decoration: BoxDecoration(
+              ),
+              child: Text(
+                options[index],
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected
-                      ? AppColors.primary
-                      : AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.border,
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  options[index],
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    color: isSelected
-                        ? AppColors.textWhite
-                        : AppColors.textSecondary,
-                  ),
+                      ? AppColors.textWhite
+                      : AppColors.textSecondary,
                 ),
               ),
             ),
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 }

@@ -6,26 +6,20 @@ import '../theme/app_route.dart';
 import '../data/mock_data.dart';
 import 'subject_categories_screen.dart';
 import 'search_screen.dart';
-import 'subject_detail_screen.dart';
-import 'my_courses_screen.dart';
+import 'my_documents_screen.dart';
+import 'my_assignments_screen.dart';
+import 'practice_list_screen.dart';
+import 'notification_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final VoidCallback? onOpenSearch;
   final VoidCallback? onOpenCategories;
-  final VoidCallback? onOpenMyCourses;
 
   const HomeScreen({
     super.key,
     this.onOpenSearch,
     this.onOpenCategories,
-    this.onOpenMyCourses,
   });
-
-  void _navigateToDetail(BuildContext context, CourseModel course) {
-    Navigator.of(context).push(
-      AppSlideRoute(page: SubjectDetailScreen(course: course)),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +65,31 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Image.asset(
-                    'assets/images/logo.png',
-                    height: 38,
-                    fit: BoxFit.contain,
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            AppSlideRoute(
+                              settings: const RouteSettings(
+                                name: NotificationListScreen.routeName,
+                              ),
+                              page: const NotificationListScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.notifications_none_rounded, // TODO: thay icon Figma
+                          color: AppColors.textPrimary,
+                          size: 24,
+                        ),
+                      ),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        height: 38,
+                        fit: BoxFit.contain,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -110,13 +125,11 @@ class HomeScreen extends StatelessWidget {
                         size: 22,
                       ),
                       const SizedBox(width: AppTheme.space12),
-                      Expanded(
-                        child: Text(
-                          'Tìm kiếm môn học, bài giảng...',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: AppColors.inputBorder,
-                          ),
+                      Text(
+                        'Tìm kiếm môn học, bài giảng...',
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: AppColors.inputBorder,
                         ),
                       ),
                     ],
@@ -160,7 +173,7 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(height: AppTheme.space16),
                           Material(
                             color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusButton),
+                            borderRadius: BorderRadius.circular(20),
                             child: InkWell(
                               onTap: () {
                                 if (onOpenCategories != null) {
@@ -168,12 +181,13 @@ class HomeScreen extends StatelessWidget {
                                 } else {
                                   Navigator.of(context).push(
                                     AppSlideRoute(
-                                      page: const SubjectCategoriesScreen(),
+                                      page:
+                                          const SubjectCategoriesScreen(),
                                     ),
                                   );
                                 }
                               },
-                              borderRadius: BorderRadius.circular(AppTheme.radiusButton),
+                              borderRadius: BorderRadius.circular(20),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
@@ -287,47 +301,40 @@ class HomeScreen extends StatelessWidget {
                       bgColor: const Color(0xFFEBF2FE),
                       iconColor: AppColors.info,
                       onTap: () {
-                        _navigateToDetail(context, MockData.mathCourse);
+                        Navigator.of(context).push(
+                          AppSlideRoute(
+                            settings: const RouteSettings(name: PracticeListScreen.routeName),
+                            page: const PracticeListScreen(),
+                          ),
+                        );
                       },
                     ),
                   ),
                   const SizedBox(width: AppTheme.space12),
                   Expanded(
                     child: _QuickAccessCard(
-                      label: 'Đánh dấu',
+                      label: 'Kiểm tra',
                       icon: Icons.check_box_rounded,
                       bgColor: const Color(0xFFEAF8EF),
                       iconColor: AppColors.success,
                       onTap: () {
-                        if (onOpenMyCourses != null) {
-                          onOpenMyCourses!();
-                        } else {
-                          Navigator.of(context).push(
-                            AppSlideRoute(
-                              page: const MyCoursesScreen(showBackButton: true),
-                            ),
-                          );
-                        }
+                        Navigator.of(context).push(
+                          AppSlideRoute(page: const MyAssignmentsScreen()),
+                        );
                       },
                     ),
                   ),
                   const SizedBox(width: AppTheme.space12),
                   Expanded(
                     child: _QuickAccessCard(
-                      label: 'Lịch thi',
-                      icon: Icons.calendar_month_rounded,
+                      label: 'Tài liệu',
+                      icon: Icons.article_outlined,
                       bgColor: const Color(0xFFFEF7EB),
                       iconColor: AppColors.warning,
                       onTap: () {
-                        if (onOpenMyCourses != null) {
-                          onOpenMyCourses!();
-                        } else {
-                          Navigator.of(context).push(
-                            AppSlideRoute(
-                              page: const MyCoursesScreen(showBackButton: true),
-                            ),
-                          );
-                        }
+                        Navigator.of(context).push(
+                          AppSlideRoute(page: const MyDocumentsScreen()),
+                        );
                       },
                     ),
                   ),
@@ -349,17 +356,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      if (onOpenCategories != null) {
-                        onOpenCategories!();
-                      } else {
-                        Navigator.of(context).push(
-                          AppSlideRoute(
-                            page: const SubjectCategoriesScreen(),
-                          ),
-                        );
-                      }
-                    },
+                    onTap: () {},
                     child: Text(
                       'Xem tất cả ›',
                       style: GoogleFonts.inter(
@@ -380,78 +377,68 @@ class HomeScreen extends StatelessWidget {
                 clipBehavior: Clip.none,
                 child: Row(
                   children: MockData.suggestedCourses.map((course) {
-                    return GestureDetector(
-                      onTap: () => _navigateToDetail(context, course),
-                      child: Container(
-                        width: 156,
-                        margin: const EdgeInsets.only(right: AppTheme.space12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Ảnh minh họa môn học
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: course.coverImage != null
-                                  ? Image.asset(
-                                      course.coverImage!,
-                                      width: 156,
-                                      height: 120,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      width: 156,
-                                      height: 120,
-                                      color: AppColors.primaryLight,
-                                      child: const Icon(Icons.school, color: AppColors.primary, size: 40),
-                                    ),
+                    return Container(
+                      width: 156,
+                      margin: const EdgeInsets.only(right: AppTheme.space12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Ảnh minh họa môn học
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.asset(
+                              course.coverImage!,
+                              width: 156,
+                              height: 120,
+                              fit: BoxFit.cover,
                             ),
-                            const SizedBox(height: AppTheme.space8),
-                            // Tiêu đề môn học
-                            Text(
-                              course.title,
+                          ),
+                          const SizedBox(height: AppTheme.space8),
+                          // Tiêu đề môn học
+                          Text(
+                            course.title,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: AppTheme.space4),
+                          // Tiến độ học tập
+                          RichText(
+                            text: TextSpan(
                               style: GoogleFonts.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
+                                fontSize: 11,
+                                color: AppColors.textSecondary,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: AppTheme.space4),
-                            // Tiến độ học tập
-                            RichText(
-                              text: TextSpan(
-                                style: GoogleFonts.inter(
-                                  fontSize: 11,
-                                  color: AppColors.textSecondary,
-                                ),
-                                children: [
-                                  const TextSpan(text: 'Tiến độ học tập '),
-                                  TextSpan(
-                                    text: '${(course.progress * 100).toInt()}%',
-                                    style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primary,
-                                    ),
+                              children: [
+                                const TextSpan(text: 'Tiến độ học tập '),
+                                TextSpan(
+                                  text: '${(course.progress * 100).toInt()}%',
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primary,
                                   ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: AppTheme.space4),
-                            // Thanh tiến độ ngang
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: LinearProgressIndicator(
-                                value: course.progress,
-                                minHeight: 5,
-                                backgroundColor: AppColors.border,
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                  AppColors.primaryAccent, // #22C55E
                                 ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.space4),
+                          // Thanh tiến độ ngang
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: course.progress,
+                              minHeight: 5,
+                              backgroundColor: AppColors.border,
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                AppColors.primary,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   }).toList(),
