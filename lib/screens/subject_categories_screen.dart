@@ -5,7 +5,7 @@ import '../theme/app_theme.dart';
 import '../theme/app_route.dart';
 import '../data/mock_data.dart';
 import 'search_screen.dart';
-import 'search_results_screen.dart';
+import 'main_navigation_screen.dart';
 
 class SubjectCategoriesScreen extends StatefulWidget {
   final bool showBackButton;
@@ -56,9 +56,9 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
                             size: 20,
                           ),
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                          constraints: const BoxConstraints(),
                         ),
-                        const SizedBox(width: AppTheme.space8),
+                        const SizedBox(width: AppTheme.space12),
                       ],
                       Text(
                         'Danh mục môn học',
@@ -107,7 +107,7 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
                       const SizedBox(width: AppTheme.space12),
                       Expanded(
                         child: Text(
-                          'Tìm kiếm danh mục...',
+                          'Tìm kiếm môn học...',
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: AppColors.inputBorder,
@@ -188,22 +188,11 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
                     decoration: BoxDecoration(
                       color: cat.backgroundColor,
                       borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                      border: Border.all(color: AppColors.border, width: 0.5),
                     ),
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        onTap: () {
-                          // Điều hướng sang màn hình Kết quả tìm kiếm theo danh mục
-                          Navigator.of(context).push(
-                            AppSlideRoute(
-                              page: SearchResultsScreen(
-                                initialQuery: cat.title,
-                                initialCategory: cat.title,
-                              ),
-                            ),
-                          );
-                        },
+                        onTap: () {},
                         borderRadius:
                             BorderRadius.circular(AppTheme.radiusCard),
                         child: Column(
@@ -242,6 +231,109 @@ class _SubjectCategoriesScreenState extends State<SubjectCategoriesScreen> {
               const SizedBox(height: AppTheme.space24),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: widget.showBackButton
+          ? Container(
+              decoration: const BoxDecoration(
+                color: AppColors.cardBackground,
+                border: Border(
+                  top: BorderSide(
+                    color: AppColors.border,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: SafeArea(
+                top: false,
+                child: SizedBox(
+                  height: 64,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildCatNavItem(
+                        context,
+                        label: 'Trang chủ',
+                        icon: Icons.home_outlined,
+                        isSelected: false,
+                        onTap: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation,
+                                      secondaryAnimation) =>
+                                  const MainNavigationScreen(initialIndex: 0),
+                              transitionDuration: Duration.zero,
+                            ),
+                            (route) => false,
+                          );
+                        },
+                      ),
+                      _buildCatNavItem(
+                        context,
+                        label: 'Khám phá',
+                        icon: Icons.search_rounded,
+                        isSelected: true,
+                        onTap: () {},
+                      ),
+                      _buildCatNavItem(
+                        context,
+                        label: 'Học tập',
+                        icon: Icons.article_outlined,
+                        isSelected: false,
+                        onTap: () {},
+                      ),
+                      _buildCatNavItem(
+                        context,
+                        label: 'Yêu thích',
+                        icon: Icons.favorite_outline_rounded,
+                        isSelected: false,
+                        onTap: () {},
+                      ),
+                      _buildCatNavItem(
+                        context,
+                        label: 'Cá nhân',
+                        icon: Icons.person_outline_rounded,
+                        isSelected: false,
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildCatNavItem(
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final color = isSelected ? AppColors.primary : AppColors.textSecondary;
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 22,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: color,
+              ),
+            ),
+          ],
         ),
       ),
     );
